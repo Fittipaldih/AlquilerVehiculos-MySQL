@@ -72,8 +72,8 @@ INSERT INTO Pais values (1, 'Argentina'), (2, 'Brasil');
 INSERT INTO Provincia values (1, 'Buenos Aires',1), (2, 'Rio De Janeiro',2), (3, 'Cordoba',1); 
 
 INSERT INTO Vehiculo (patente, año, plazas, idEstado, idMarca, idTipo) VALUES ('AB443WE', 2017, 5, 1, 1, 1),
-																			('PNP593', 2016, 5, 2, 2, 3),
-                                                                            ('AF223PO', 2023, 2, 1, 3, 2);
+										('PNP593', 2016, 5, 2, 2, 3),
+                                                                           	('AF223PO', 2023, 2, 1, 3, 2);
 																		
 INSERT INTO Cliente(email, nombreApellido, domCalle, domAltura, domPiso, idProvincia) values 
 					('fittipaldi.h@gmail.com', 'Hernan Fittipaldi', 'MiCalle', 1234, 'PB', 1), 
@@ -83,23 +83,23 @@ INSERT INTO Cliente(email, nombreApellido, domCalle, domAltura, domPiso, idProvi
 INSERT INTO ClienteEmpresa values (2, 7854563123, 'Estudio de Abogacia');
 INSERT INTO ClienteParticular VALUES (1, '1996-09-17');
 INSERT INTO Telefono VALUES (1, 1122334455), (2, 5544332211);
-INSERT INTO VehiculoEsAlquiladoPorCliente values    (1,1,1,'2022-02-24', 15000, 2, true),
-													(3,2,2,'2000-02-24', 12000, 3, true), 
-													(4, 1, 3, '20220521', 10000, 1, false);
+INSERT INTO VehiculoEsAlquiladoPorCliente values (1,1,1,'2022-02-24', 15000, 2, true),
+						(3,2,2,'2000-02-24', 12000, 3, true), 
+						(4, 1, 3, '20220521', 10000, 1, false);
 
 -- CONSULTAS
 -- 1. Liste nombre de clientes que no realizaron alquiler alguno durante el año 2022
 SELECT nombreApellido
 FROM cliente
 WHERE id NOT IN  ( SELECT va.idCliente
-                    FROM VehiculoEsAlquiladoPorCliente va 
-					WHERE year(va.fecha) = 2022);
-                    
+                   FROM VehiculoEsAlquiladoPorCliente va 
+		   WHERE year(va.fecha) = 2022);
+-- otra forma de resolver la consulta es :                   
 SELECT nombreApellido
 FROM cliente c
 WHERE NOT EXISTS  ( SELECT 1
-					FROM VehiculoEsAlquiladoPorCliente va 
-					WHERE year(va.fecha) = 2022
+		    FROM VehiculoEsAlquiladoPorCliente va 
+		    WHERE year(va.fecha) = 2022
                     AND c.id = va.idCliente );
 
 -- 2. Liste los nombres de clientes del país “Brasil”, junto al importe total de todos los alquileres efectuados al mismo.
@@ -110,15 +110,15 @@ JOIN pais p ON pro.idPais = p.id
 LEFT JOIN VehiculoEsAlquiladoPorCliente va ON va.idCliente = c.id
 GROUP BY p.nombre
 HAVING p.nombre LIKE 'Brasil';
-
+-- otra forma de resolver la consulta es : 
 SELECT c.nombreApellido as Cliente, SUM( (va.idCliente = c.id) * va.importe) as ImporteTotalPorAlquileres
 FROM cliente c
 JOIN VehiculoEsAlquiladoPorCliente va ON va.idCliente = c.id
 WHERE c.idProvincia IN ( SELECT p.id
-						FROM provincia p
-						WHERE p.idPais IN (SELECT pa.id
-											FROM pais pa
-											WHERE pa.nombre LIKE 'BRASIL')
+			 FROM provincia p
+			 WHERE p.idPais IN (SELECT pa.id
+					    FROM pais pa
+					    WHERE pa.nombre LIKE 'BRASIL')
 						);
                         
 -- 3. Crear un listado de los alquileres realizados durante el año 2022. Por cada alquiler
@@ -143,17 +143,16 @@ GROUP BY va.id; -- para evitar repetidos
 -- 5. Elimine todos los alquileres realizados a clientes cuyo nombre comienza con la letra A, donde la fecha de alquiler sea 21/05/2022
 --     el vehículo tenga 5 plazas y no se haya contratado seguro.
 DELETE FROM vehiculoEsAlquiladoPorCliente WHERE id IN( SELECT * FROM (  SELECT va.id 
-																		FROM vehiculoEsAlquiladoPorCliente va
-																		WHERE va.fecha = 20220521
-																		AND va.contratoSeguro IS FALSE
-																		AND EXISTS ( SELECT c.id 
-																					FROM cliente c 
-																					WHERE c.nombreApellido like 'A%'
-																					AND va.idCliente = c.id
-																					AND EXISTS (SELECT v.id
-																								FROM vehiculo v
-																								WHERE v.plazas = 5 
-																								AND v.id = va.idVehiculo)
-																					)
-																	)AS X
-                                                        ) ;
+									FROM vehiculoEsAlquiladoPorCliente va
+									WHERE va.fecha = 20220521
+									AND va.contratoSeguro IS FALSE
+									AND EXISTS ( SELECT c.id 
+										     FROM cliente c 
+										     WHERE c.nombreApellido like 'A%'
+										     AND va.idCliente = c.id
+										     AND EXISTS (SELECT v.id
+										     FROM vehiculo v
+										     WHERE v.plazas = 5 
+										     AND v.id = va.idVehiculo)
+										)
+							)AS X ) ;
