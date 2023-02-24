@@ -1,3 +1,4 @@
-Requerimientos:
+Realizar el DER normalizado, el MR y luego generar el archivo correspondiente a MySQL. 
 
+Requerimientos:
 Una empresa de alquiler de vehículos requiere poder registrar los alquileres efectuados, junto a toda su flota y sus clientes. Por cada vehículo se desea almacenar su patente, su marca (Ford, Chevrolet, etc.), año de patentamiento, tipo (Sedan, Coupe, Convertible, etc.), cantidad de plazas y estado de conservación (Bueno, Malo o Regular), A cada cliente se le asigna un número único, y se desea registrar su nombre completo, domicilio, provincia, país, teléfonos (pueden ser múltiples) y mail. Los clientes pueden ser de dos tipos: Particulares o Empresa. De los primeros se desea conocer  articularmente su fecha de nacimiento y de los segundos un CUIT y rubro de la empresa. Cada alquiler implica almacenar: número de alquiler (identificador único), fecha de alquiler, cantidad de días a alquilar, cliente, vehículo e importe. También se debe indicar si se ha contratado seguro o no en el alquiler.
